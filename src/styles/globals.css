@@ -41,8 +41,8 @@
 
 .asset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.75rem;
+  gap: 1rem;
+  justify-items: center;
 }
 
 /* Custom animations */
@@ -134,10 +134,10 @@
 }
 
 @layer components {
-  /* Asset Grid - Regular grid for icons and animations */
+  /* Asset Grid - Fixed 6 columns per row for icons and animations */
   .asset-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 1rem;
   }
 
@@ -149,24 +149,37 @@
     grid-auto-rows: minmax(180px, auto);
   }
 
-  /* Responsive adjustments */
-  @media (min-width: 768px) {
+  /* Responsive adjustments for mobile */
+  @media (max-width: 640px) {
     .asset-grid {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .bento-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .asset-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.875rem;
+    }
+
+    .bento-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
+
+  @media (min-width: 769px) {
+    .asset-grid {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
     }
 
     .bento-grid {
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .asset-grid {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-
-    .bento-grid {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
   }
 
@@ -281,4 +294,113 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* Infinite scrolling icon grid with flexible spacing */
+.infinite-icon-grid {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  width: 100%;
+}
+
+/* Responsive infinite grid for different screen sizes */
+@media (min-width: 1200px) {
+  .infinite-icon-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .infinite-icon-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .infinite-icon-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Custom scrollbar styles - at browser edge */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 8px;
+  border: none;
+  margin: 0;
+  min-height: 40px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner {
+  background: transparent;
+  border: none;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track-piece {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 8px;
+  border: none;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
 }

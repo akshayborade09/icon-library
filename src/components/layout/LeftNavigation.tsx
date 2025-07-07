@@ -11,6 +11,8 @@ import {
   Settings,
   User,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 interface LeftNavigationProps {
@@ -49,9 +51,11 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
   };
 
   return (
-    <div className={`transition-all duration-300 bg-white border-r border-gray-200 shadow-lg ${
+    <div className={`relative transition-all duration-300 bg-white border-r border-gray-200 shadow-lg h-full ${
       collapsed ? 'w-16' : 'w-64'
     }`}>
+   
+
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
@@ -134,7 +138,7 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
 
         {/* Footer - User Profile */}
         <div className="p-4 border-t border-gray-200">
-          <div className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-3'}`}>
+          <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-gray-200">
               <User className="w-4 h-4 text-gray-600" />
             </div>

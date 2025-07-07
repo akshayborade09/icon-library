@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import AssetTabs from '@/components/home/AssetTabs';
+import TabSearch from '@/components/layout/TabSearch';
 
 interface Asset {
   id: number;
@@ -10,21 +11,56 @@ interface Asset {
   size?: string;
 }
 
-function HomePage() {
+interface HomePageProps {
+  activeTab: string;
+}
+
+function HomePage({ activeTab }: HomePageProps) {
+  const [selectedSize, setSelectedSize] = useState('all');
+  const [sortBy, setSortBy] = useState('popular');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleAssetClick = (asset: Asset, type: string) => {
+    console.log('Asset clicked:', asset, type);
+    // Handle asset click functionality here
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   return (
     <>
-      {/* Asset Tabs - In Wrapper */}
-      <div className="max-w-[1680px] mx-auto px-6 py-8">
-        <AssetTabs />
+      {/* Tab-specific Search */}
+      <TabSearch 
+        activeTab={activeTab}
+        onSearch={handleSearch}
+        selectedSize={selectedSize}
+        onSizeChange={setSelectedSize}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+      />
+
+      {/* Asset Content */}
+      <div className="mx-auto">
+        <AssetTabs 
+          activeTab={activeTab}
+          selectedSize={selectedSize}
+          sortBy={sortBy}
+          searchQuery={searchQuery}
+          onAssetClick={handleAssetClick}
+        />
       </div>
     </>
   );
 }
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState('Icons');
+
   return (
-    <MainLayout>
-      <HomePage />
+    <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <HomePage activeTab={activeTab} />
     </MainLayout>
   );
 }

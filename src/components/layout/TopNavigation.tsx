@@ -1,24 +1,38 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Plus, Upload, Menu, X } from 'lucide-react';
+import { Plus, Upload, Menu, X, Image, Palette, Sparkles, Camera, Play, Box } from 'lucide-react';
 import AssetUpload from '@/components/AssetUpload';
 
 interface TopNavigationProps {
   onCreateProject?: () => void;
   onUpload?: () => void;
   onToggleSidebar?: () => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-export default function TopNavigation({ onCreateProject, onUpload, onToggleSidebar }: TopNavigationProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
+// SSR-safe icon mapping function
+const getTabIcon = (name: string) => {
+  switch (name) {
+    case 'Icons': return Image;
+    case 'Illustrations': return Palette;
+    case 'Spot Icons': return Sparkles;
+    case 'Images': return Camera;
+    case 'Animations': return Play;
+    case '3D Models': return Box;
+    default: return Image;
+  }
+};
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle search functionality
-    console.log('Searching for:', searchQuery);
-  };
+export default function TopNavigation({ 
+  onCreateProject, 
+  onUpload, 
+  onToggleSidebar,
+  activeTab = 'Icons',
+  onTabChange 
+}: TopNavigationProps) {
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
 
   interface AssetFile {
     id: string;
@@ -32,10 +46,19 @@ export default function TopNavigation({ onCreateProject, onUpload, onToggleSideb
     if (onUpload) onUpload();
   };
 
+  const assetTypes = [
+    { name: 'Icons' },
+    { name: 'Illustrations' },
+    { name: 'Spot Icons' },
+    { name: 'Images' },
+    { name: 'Animations' },
+    { name: '3D Models' },
+  ];
+
   return (
     <>
-      <header className="bg-white border-b border-gray-200 backdrop-blur supports-[backdrop-filter]:bg-white/95 hover:shadow-sm transition-shadow duration-300">
-        <div className="flex h-16 items-center">
+      <header className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="flex h-16 items-center justify-between">
           {/* Left: Menu Toggle */}
           <div className="flex items-center gap-2 px-4">
             <button
@@ -47,18 +70,28 @@ export default function TopNavigation({ onCreateProject, onUpload, onToggleSideb
             <div className="w-px h-4 bg-gray-300 mx-2 transition-colors duration-300 hover:bg-gray-400" />
           </div>
           
-          {/* Center: Search */}
-          <div className="flex-1 flex justify-center px-4">
-            <form onSubmit={handleSearch} className="relative w-full max-w-md group">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400 transition-all duration-200 group-hover:text-blue-500 group-focus-within:text-blue-500 group-focus-within:scale-110" />
-              <input
-                type="search"
-                placeholder="Search assets, projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 hover:shadow-sm transition-all duration-200 hover:scale-[1.02] focus:scale-[1.02] placeholder:transition-opacity placeholder:duration-200 hover:placeholder:opacity-70"
-              />
-            </form>
+          {/* Center: Tab Navigation */}
+          <div className="flex-1 flex justify-center">
+            <div className="flex items-center bg-gray-50 rounded-lg p-1 border border-gray-200">
+              {assetTypes.map((type) => {
+                const Icon = getTabIcon(type.name);
+                const isActive = activeTab === type.name;
+                return (
+                  <button
+                    key={type.name}
+                    onClick={() => onTabChange?.(type.name)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm ${
+                      isActive
+                        ? 'bg-white text-blue-600 shadow-sm border border-blue-200'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{type.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Right: Action Buttons */}
