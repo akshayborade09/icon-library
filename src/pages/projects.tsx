@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import LeftNavigation from '../components/layout/LeftNavigation';
+import PageHeader from '../components/layout/PageHeader';
 import { AssetProvider } from '../contexts/AssetContext';
 import { Search, Plus } from 'lucide-react';
 
@@ -106,29 +107,26 @@ function ProjectsPage() {
       
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Search Header - Match dashboard TabSearch padding with max-width container */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="mx-auto">
-            <div className="flex items-center justify-between">
-              {/* Title and description */}
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
-                <p className="text-gray-600 mt-1">Manage and organize your design assets</p>
-              </div>
-              
-              {/* Create project button */}
-              <button
-                onClick={handleCreateProject}
-                className="group h-9 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
-              >
-                <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
-                Create Project
-              </button>
-            </div>
-            
-            {/* Search bar */}
-            <div className="mt-4">
-              <div className="relative group max-w-md">
+        <PageHeader
+          title="Projects"
+          description="Manage and organize your design assets"
+          actions={
+            <button
+              onClick={handleCreateProject}
+              className="group h-9 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
+            >
+              <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
+              Create Project
+            </button>
+          }
+        />
+
+        {/* Scrollable Content - Match dashboard content padding with max-width container */}
+        <main className="flex-1 overflow-y-auto px-6 py-8">
+          <div className="max-w-[1400px] mx-auto px-10">
+            {/* Search bar above project list */}
+            <div className="mb-6">
+              <div className="relative group">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 transition-all duration-200 group-hover:text-blue-500 group-focus-within:text-blue-500" />
                 <input
                   type="search"
@@ -139,12 +137,7 @@ function ProjectsPage() {
                 />
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Scrollable Content - Match dashboard content padding with max-width container */}
-        <main className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-[1400px] mx-auto px-10">
+            
             <div className="space-y-4">
               {filteredProjects.length > 0 ? (
                 filteredProjects.map((project) => (

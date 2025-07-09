@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
 
 interface TabSearchProps {
   activeTab: string;
   onSearch?: (query: string) => void;
+  searchQuery?: string;
   selectedSize?: string;
   onSizeChange?: (size: string) => void;
   sortBy?: string;
@@ -14,15 +15,21 @@ interface TabSearchProps {
 
 export default function TabSearch({ 
   activeTab, 
-  onSearch, 
+  onSearch,
+  searchQuery: externalSearchQuery = '',
   selectedSize = 'all',
   onSizeChange,
   sortBy = 'popular',
   onSortChange
 }: TabSearchProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery);
   const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  // Sync with external search query
+  useEffect(() => {
+    setSearchQuery(externalSearchQuery);
+  }, [externalSearchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

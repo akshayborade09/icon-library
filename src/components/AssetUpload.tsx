@@ -202,7 +202,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
       setCurrentStep('create-project');
     } else {
       // If in regular upload mode, go to upload step
-      setCurrentStep('upload');
+    setCurrentStep('upload');
     }
   };
 
@@ -446,7 +446,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
     });
     
     // Close the modal immediately
-    onClose();
+      onClose();
     
     // Navigate to projects page and show success toast
     window.location.href = '/projects';
@@ -700,20 +700,20 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                 <div className="space-y-4">
                   {/* Project Summary - Only show when in create-project mode */}
                   {mode === 'create-project' && (
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="font-semibold text-gray-900">{projectName}</h3>
-                      {projectDescription && (
-                        <p className="text-sm text-gray-600 mt-1">{projectDescription}</p>
-                      )}
-                      {invitedMembers.length > 0 && (
-                        <div className="flex items-center space-x-2 mt-2">
-                          <Users className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-500">{invitedMembers.length} member{invitedMembers.length > 1 ? 's' : ''}</span>
-                        </div>
-                      )}
-                    </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h3 className="font-semibold text-gray-900">{projectName}</h3>
+                    {projectDescription && (
+                      <p className="text-sm text-gray-600 mt-1">{projectDescription}</p>
+                    )}
+                    {invitedMembers.length > 0 && (
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm text-gray-500">{invitedMembers.length} member{invitedMembers.length > 1 ? 's' : ''}</span>
+                      </div>
+                    )}
+                  </div>
                   )}
-                  
+
                   {/* Summary */}
                   {/* <div className="p-3 bg-gray-50 rounded-lg mb-4">
                     <p className="text-sm text-gray-600">
@@ -752,7 +752,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         </button>
                         
-                                                {!collapsedCategories[category] && (
+                        {!collapsedCategories[category] && (
                           <div className="border-t border-gray-100 p-4 pt-2 space-y-2">
                             {categorizedAssets[category]
                               .sort((a, b) => a.name.localeCompare(b.name))
@@ -791,24 +791,24 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                           .sort((a, b) => a.name.localeCompare(b.name))
                           .map((asset) => (
                                                     <div key={asset.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg w-full">
-                            <input
-                              type="checkbox"
-                              checked={selectedAssets.includes(asset.id)}
-                              onChange={() => toggleAssetSelection(asset.id)}
-                              className="h-4 w-4 text-blue-600 rounded border-gray-300"
-                            />
-                            <div className={`w-16 h-16 bg-gray-100 rounded-lg overflow-hidden ${
-                              asset.aspectRatio === '1x1' ? 'aspect-square' :
-                              asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
-                            }`}>
-                              <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{asset.name}</h4>
-                              <p className="text-sm text-gray-500">{asset.size}</p>
-                            </div>
+                          <input
+                            type="checkbox"
+                            checked={selectedAssets.includes(asset.id)}
+                            onChange={() => toggleAssetSelection(asset.id)}
+                            className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                          />
+                          <div className={`w-16 h-16 bg-gray-100 rounded-lg overflow-hidden ${
+                            asset.aspectRatio === '1x1' ? 'aspect-square' :
+                            asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
+                          }`}>
+                            <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                           </div>
-                        ))}
+                          <div className="flex-1">
+                              <h4 className="font-medium text-gray-900">{asset.name}</h4>
+                            <p className="text-sm text-gray-500">{asset.size}</p>
+                          </div>
+                        </div>
+                      ))}
                       </div>
                     </div>
                   )}
@@ -821,8 +821,8 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
           {/* Fixed Bottom Section - Action buttons for each step */}
           {currentStep !== 'progress' && (
-            <div className="flex-shrink-0 p-6 bg-white border-t border-gray-200">
-              {currentStep === 'create-project' && (
+          <div className="flex-shrink-0 p-6 bg-white border-t border-gray-200">
+            {currentStep === 'create-project' && (
               <button 
                 onClick={() => {
                   const hasUploadedAssets = assets.length > 0 || Object.values(categorizedAssets).some(cat => cat.length > 0);
@@ -843,7 +843,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                 })()}
               </button>
             )}
-
+            
             {/* No button for upload step - automatically proceeds after upload completion */}
 
             {currentStep === 'tag-assets' && (
@@ -856,7 +856,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
             )}
 
 
-            </div>
+          </div>
           )}
 
           {/* Floating Tagging Bar - Only show in tag-assets step */}

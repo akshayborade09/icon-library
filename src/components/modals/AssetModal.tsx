@@ -29,6 +29,13 @@ const colorTokens = [
 ];
 
 const codeExamples = {
+  tags: `Related Tags:
+• Shopping
+• E-commerce  
+• Cart
+• Store
+• Purchase
+• Retail`,
   react: `import { ShoppingCart } from 'lucide-react';
 
 function MyComponent() {
@@ -67,20 +74,27 @@ Image(systemName: "cart")
 };
 
 export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) {
-  const [selectedColor, setSelectedColor] = useState('#3B82F6');
-  const [customColor, setCustomColor] = useState('#3B82F6');
-  const [activeCodeTab, setActiveCodeTab] = useState('react');
+  const [selectedColor, setSelectedColor] = useState('#000000');
+  const [customColor, setCustomColor] = useState('#000000');
+  const [activeTab, setActiveTab] = useState('tags');
 
   const downloadOptions = [
-    { label: 'SVG Download', action: () => console.log('Download SVG') },
-    { label: 'SVG Copy', action: () => console.log('Copy SVG') },
-    { label: 'PNG Copy', action: () => console.log('Copy PNG') },
-    { label: 'PNG Download', action: () => console.log('Download PNG') },
-    { label: 'iOS PNG (1x, 2x, 3x)', action: () => console.log('Download iOS PNG') },
-    { label: 'PDF Download', action: () => console.log('Download PDF') },
+    { label: 'svg', format: 'svg' },
+    { label: 'png', format: 'png' },
+    { label: 'jpg', format: 'jpg' },
+    { label: 'png ↓', format: 'png-download' },
+    { label: 'ico png', format: 'ico' },
+    { label: 'pdf ↓', format: 'pdf' },
   ];
 
-  const codeList = ['react', 'web', 'vue', 'flutter', 'swift'];
+  const tabs = [
+    { key: 'tags', label: 'Tags' },
+    { key: 'react', label: 'React' },
+    { key: 'web', label: 'Web' },
+    { key: 'vue', label: 'Vue' },
+    { key: 'flutter', label: 'Flutter' },
+    { key: 'swift', label: 'Swift' },
+  ];
 
   if (!isOpen) return null;
 
@@ -92,144 +106,120 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
         onClick={onClose}
       />
       
-      {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">{asset.name}</h2>
-            <p className="text-sm text-gray-500">{asset.size}</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
-        </div>
+      {/* Modal - Main Vertical Flex */}
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
 
-        <div className="flex">
-          {/* Left side - Asset Preview */}
-          <div className="flex-1 p-6">
-            <div className="bg-gray-50 rounded-xl p-8 flex items-center justify-center mb-6" style={{ minHeight: '100px' }}>
+        {/* 1st Section - Icon Info + Color (Horizontal Flex) */}
+        <div className="flex items-start justify-between p-6 border-b border-gray-200">
+          {/* Left: Icon + Info */}
+          <div className="flex items-center gap-4">
+            {/* Icon Thumbnail 64x64 */}
+            <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-200">
               <img 
                 src={asset.thumbnail} 
                 alt={asset.name}
-                className="max-w-full max-h-full object-contain"
-                style={{ color: selectedColor }}
+                className="w-10 h-10 object-contain"
+                style={{ filter: selectedColor !== '#000000' ? `hue-rotate(${selectedColor})` : 'none' }}
               />
             </div>
             
-            {/* Downloads count */}
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-              <Download className="h-4 w-4" />
-              <span>{asset.downloads} downloads</span>
+            {/* Icon Name and Size */}
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">{asset.name}</h2>
+              <p className="text-sm text-gray-500">{asset.size}</p>
             </div>
           </div>
 
-          {/* Right side - Controls */}
-          <div className="w-80 border-l border-gray-200 p-6 space-y-6">
-            {/* Color Options */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                Apply Color
-              </h3>
-              
-              {/* Predefined Colors */}
-              <div className="grid grid-cols-4 gap-2 mb-3">
-                {colorTokens.map((token) => (
-                  <button
-                    key={token.name}
-                    onClick={() => setSelectedColor(token.value)}
-                    className={`w-10 h-10 rounded-lg border-2 transition-all ${
-                      selectedColor === token.value ? 'border-blue-500 scale-110' : 'border-gray-200'
-                    }`}
-                    style={{ backgroundColor: token.value }}
-                    title={token.name}
-                  />
-                ))}
-              </div>
-              
-              {/* Custom Color */}
-              <div className="flex gap-2">
-                <input
-                  type="color"
-                  value={customColor}
-                  onChange={(e) => {
-                    setCustomColor(e.target.value);
-                    setSelectedColor(e.target.value);
-                  }}
-                  className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={customColor}
-                  onChange={(e) => {
-                    setCustomColor(e.target.value);
-                    setSelectedColor(e.target.value);
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="#3B82F6"
-                />
-              </div>
+          {/* Right: Apply Color */}
+          <div className="flex flex-col items-end gap-3 mr-12">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">Color:</span>
+              <input
+                type="text"
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+                className="w-20 px-2 py-1 text-xs border border-gray-300 rounded"
+                placeholder="#000"
+              />
             </div>
-
-            {/* Download Options */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Download Options</h3>
-              <div className="space-y-2">
-                {downloadOptions.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={option.action}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+            
+            {/* Color Picker */}
+            <div className="flex gap-1">
+              {colorTokens.slice(0, 6).map((token) => (
+                <button
+                  key={token.name}
+                  onClick={() => setSelectedColor(token.value)}
+                  className={`w-6 h-6 rounded border-2 transition-all ${
+                    selectedColor === token.value ? 'border-blue-500 scale-110' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: token.value }}
+                  title={token.name}
+                />
+              ))}
             </div>
-
-            {/* Code Tabs - Only for icons */}
-            {asset.category === 'icon' && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Code</h3>
-                
-                {/* Tab Navigation */}
-                <div className="flex space-x-1 mb-3 bg-gray-100 rounded-lg p-1">
-                  {codeList.map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveCodeTab(tab)}
-                      className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-                        activeCodeTab === tab
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Code Content */}
-                <div className="relative">
-                  <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto">
-                    <code>{codeExamples[activeCodeTab as keyof typeof codeExamples]}</code>
-                  </pre>
-                  <button
-                    onClick={() => navigator.clipboard.writeText(codeExamples[activeCodeTab as keyof typeof codeExamples])}
-                    className="absolute top-2 right-2 p-1.5 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
-                    title="Copy code"
-                  >
-                    <Copy className="h-3 w-3 text-gray-300" />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
+        </div>
+
+        {/* 2nd Section - Download Options (Horizontal Flex) */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center gap-2 flex-wrap">
+            {downloadOptions.map((option, index) => (
+              <button
+                key={index}
+                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-300"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 3rd Section - Tags (Horizontal Flex) */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center gap-2 flex-wrap">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                  activeTab === tab.key 
+                    ? 'bg-black text-white border-black' 
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Content Details */}
+        <div className="px-6 py-4 max-h-60 overflow-y-auto">
+          {activeTab === 'tags' ? (
+            <div className="text-sm text-gray-700 whitespace-pre-line">
+              {codeExamples.tags}
+            </div>
+          ) : (
+            <div className="relative">
+              <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto">
+                <code>{codeExamples[activeTab as keyof typeof codeExamples]}</code>
+              </pre>
+              <button
+                onClick={() => navigator.clipboard.writeText(codeExamples[activeTab as keyof typeof codeExamples])}
+                className="absolute top-2 right-2 p-1.5 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                title="Copy code"
+              >
+                <Copy className="h-3 w-3 text-gray-300" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

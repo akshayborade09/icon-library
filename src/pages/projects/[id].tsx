@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import LeftNavigation from '../../components/layout/LeftNavigation';
 import { AssetProvider } from '../../contexts/AssetContext';
@@ -32,9 +32,10 @@ interface ContextAsset {
 }
 
 const PROJECT_TABS = [
-  { id: 'icons', label: 'Icons', href: '#icons' },
-  { id: 'illustrations', label: 'Illustrations', href: '#illustrations' },
-  { id: 'images', label: 'Images', href: '#images' }
+  { id: 'icons', label: 'Icons' },
+  { id: 'illustrations', label: 'Illustrations' },
+  { id: 'images', label: 'Images' },
+  { id: 'animations', label: 'Animations' }
 ];
 
 const ICON_SIZES = ['16x16', '20x20', '24x24'];
@@ -67,6 +68,11 @@ const MOCK_PROJECT_ASSETS: Asset[] = [
   // Images
   { id: '16', name: 'Product Hero', thumbnail: '/api/placeholder/200/150', size: '1200x800', category: 'image', downloads: 54, projectId: '1' },
   { id: '17', name: 'Banner Image', thumbnail: '/api/placeholder/200/150', size: '1200x600', category: 'image', downloads: 76, projectId: '1' },
+  
+  // Animations
+  { id: '18', name: 'Loading Spinner', thumbnail: '/api/placeholder/200/150', size: '400x400', category: 'animation', downloads: 142, projectId: '1' },
+  { id: '19', name: 'Button Hover', thumbnail: '/api/placeholder/200/150', size: '300x100', category: 'animation', downloads: 98, projectId: '1' },
+  { id: '20', name: 'Page Transition', thumbnail: '/api/placeholder/200/150', size: '800x600', category: 'animation', downloads: 112, projectId: '1' },
 ];
 
 function ProjectDetailPage() {
@@ -74,15 +80,24 @@ function ProjectDetailPage() {
   const { id } = router.query;
   const [project, setProject] = useState<Project | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('icons');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Refs for scrolling
-  const iconsRef = useRef<HTMLDivElement>(null);
-  const illustrationsRef = useRef<HTMLDivElement>(null);
-  const imagesRef = useRef<HTMLDivElement>(null);
+  // Get active tab from URL query parameter, default to 'icons'
+  const activeTab = (router.query.tab as string) || 'icons';
+
+  // Redirect to icons tab by default if no tab is specified
+  useEffect(() => {
+    if (router.isReady && !router.query.tab) {
+      router.replace({
+        pathname: router.pathname,
+        query: { ...router.query, tab: 'icons' }
+      });
+    }
+  }, [router.isReady, router.query.tab, router]);
+
+  // Refs no longer needed since tabs are handled by sidebar navigation
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -114,6 +129,7 @@ function ProjectDetailPage() {
   const iconAssets = filteredAssets.filter((asset: Asset) => asset.category === 'icon');
   const illustrationAssets = filteredAssets.filter((asset: Asset) => asset.category === 'illustration');
   const imageAssets = filteredAssets.filter((asset: Asset) => asset.category === 'image');
+  const animationAssets = filteredAssets.filter((asset: Asset) => asset.category === 'animation');
 
   // Group icons by size
   const iconsBySize = ICON_SIZES.reduce((acc, size) => {
@@ -121,29 +137,39 @@ function ProjectDetailPage() {
     return acc;
   }, {} as Record<string, Asset[]>);
 
+  // Calculate which tabs have results
+  const tabsWithResults = PROJECT_TABS.filter(tab => {
+    switch (tab.id) {
+      case 'icons':
+        return iconAssets.length > 0;
+      case 'illustrations':
+        return illustrationAssets.length > 0;
+      case 'images':
+        return imageAssets.length > 0;
+      case 'animations':
+        return animationAssets.length > 0;
+      default:
+        return false;
+    }
+  });
+
+  // Check if any assets were found
+  const hasAnyResults = filteredAssets.length > 0;
+
   const handleAssetClick = (asset: Asset) => {
     setSelectedAsset(asset);
     setIsModalOpen(true);
   };
 
-  const handleTabClick = (tabId: string) => {
-    setActiveTab(tabId);
-    
-    // Scroll to section
-    const refs = {
-      icons: iconsRef,
-      illustrations: illustrationsRef,
-      images: imagesRef
-    };
-    
-    const targetRef = refs[tabId as keyof typeof refs];
-    if (targetRef?.current) {
-      targetRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+  // Auto-switch to first available tab if current tab has no results
+  useEffect(() => {
+    if (tabsWithResults.length > 0 && !tabsWithResults.find(tab => tab.id === activeTab)) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, tab: tabsWithResults[0].id }
       });
     }
-  };
+  }, [tabsWithResults, activeTab, router]);
 
   const renderAssetGrid = (assets: Asset[], columns = 'grid-cols-8') => (
     <div className={`grid ${columns} gap-4`}>
@@ -255,85 +281,105 @@ function ProjectDetailPage() {
                 </div>
               </div>
 
-              {/* Tab Navigation */}
-              <div className="flex space-x-8 border-b border-gray-200">
-                {PROJECT_TABS.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleTabClick(tab.id)}
-                    className={`py-3 px-1 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+{/* Tab navigation removed - now handled by sidebar */}
             </div>
           </div>
 
           {/* Scrollable Content */}
           <main className="flex-1 overflow-y-auto p-6">
-            <div className="space-y-12">
-              {/* Icons Section */}
-              <section ref={iconsRef} id="icons" className="scroll-mt-6">
-                <div className="space-y-8">
-                  {ICON_SIZES.map((size) => (
-                    <div key={size}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">{size}</h3>
-                        <span className="text-sm text-gray-500">
-                          {iconsBySize[size]?.length || 0} icons
-                        </span>
-                      </div>
-                      {iconsBySize[size]?.length > 0 ? (
-                        renderAssetGrid(iconsBySize[size])
-                      ) : (
-                        <div className="text-center py-8 text-gray-500">
-                          No {size} icons found
-                        </div>
-                      )}
+            {!hasAnyResults ? (
+              /* Empty State */
+              <div className="flex flex-col items-center justify-center h-full text-center py-16">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                  <Search className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No assets found</h3>
+                <p className="text-gray-500 mb-4 max-w-md">
+                  {searchQuery 
+                    ? `No assets match "${searchQuery}". Try adjusting your search terms.`
+                    : 'This project doesn\'t contain any assets yet.'
+                  }
+                </p>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Clear search
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Icons Tab Content */}
+                {activeTab === 'icons' && iconAssets.length > 0 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-xl font-semibold text-gray-900">Icons</h2>
+                      <span className="text-sm text-gray-500">
+                        {iconAssets.length} icons
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Illustrations Section */}
-              <section ref={illustrationsRef} id="illustrations" className="scroll-mt-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">Illustrations</h2>
-                  <span className="text-sm text-gray-500">
-                    {illustrationAssets.length} illustrations
-                  </span>
-                </div>
-                {illustrationAssets.length > 0 ? (
-                  renderIllustrationGrid(illustrationAssets)
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    No illustrations found
+                    {ICON_SIZES.map((size) => (
+                      <div key={size}>
+                        <div className="flex items-center gap-3 mb-4">
+                          <h3 className="text-lg font-medium text-gray-900">{size}</h3>
+                          <span className="text-sm text-gray-500">
+                            {iconsBySize[size]?.length || 0} icons
+                          </span>
+                        </div>
+                        {iconsBySize[size]?.length > 0 ? (
+                          renderAssetGrid(iconsBySize[size])
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            No {size} icons found
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
-              </section>
 
-              {/* Images Section */}
-              <section ref={imagesRef} id="images" className="scroll-mt-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">Images</h2>
-                  <span className="text-sm text-gray-500">
-                    {imageAssets.length} images
-                  </span>
-                </div>
-                {imageAssets.length > 0 ? (
-                  renderIllustrationGrid(imageAssets)
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    No images found
+                {/* Illustrations Tab Content */}
+                {activeTab === 'illustrations' && illustrationAssets.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-xl font-semibold text-gray-900">Illustrations</h2>
+                      <span className="text-sm text-gray-500">
+                        {illustrationAssets.length} illustrations
+                      </span>
+                    </div>
+                    {renderIllustrationGrid(illustrationAssets)}
                   </div>
                 )}
-              </section>
-            </div>
+
+                {/* Images Tab Content */}
+                {activeTab === 'images' && imageAssets.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-xl font-semibold text-gray-900">Images</h2>
+                      <span className="text-sm text-gray-500">
+                        {imageAssets.length} images
+                      </span>
+                    </div>
+                    {renderIllustrationGrid(imageAssets)}
+                  </div>
+                )}
+
+                {/* Animations Tab Content */}
+                {activeTab === 'animations' && animationAssets.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-xl font-semibold text-gray-900">Animations</h2>
+                      <span className="text-sm text-gray-500">
+                        {animationAssets.length} animations
+                      </span>
+                    </div>
+                    {renderIllustrationGrid(animationAssets)}
+                  </div>
+                )}
+              </div>
+            )}
           </main>
         </div>
       </div>

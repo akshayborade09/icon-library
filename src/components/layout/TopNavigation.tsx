@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Plus, Upload, X, Image, Palette, Sparkles, Camera, Play, Box } from 'lucide-react';
-import AssetUpload from '../AssetUpload';
+import React from 'react';
+import { Image, Palette, Sparkles, Camera, Play, Box } from 'lucide-react';
 
 interface TopNavigationProps {
-  onCreateProject?: () => void;
-  onUpload?: () => void;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
 }
@@ -25,26 +22,10 @@ const getTabIcon = (name: string) => {
 };
 
 export default function TopNavigation({ 
-  onCreateProject, 
-  onUpload,
   activeTab = 'Icons',
   onTabChange 
 }: TopNavigationProps) {
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
-  interface AssetFile {
-    id: string;
-    file: File;
-    status: string;
-  }
-
-  const handleUploadComplete = (files: AssetFile[]) => {
-    console.log('Upload completed:', files);
-    setShowUploadDialog(false);
-    if (onUpload) onUpload();
-  };
 
   const assetTypes = [
     { name: 'Icons' },
@@ -87,42 +68,13 @@ export default function TopNavigation({
             </div>
           </div>
 
-          {/* Right: Action Buttons */}
+          {/* Right: Empty space */}
           <div className="flex items-center gap-2 px-4">
-            {/* Create Project Button */}
-            <button 
-              onClick={() => setIsCreateProjectOpen(true)}
-              className="group h-9 px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 hover:shadow-sm active:scale-95"
-            >
-              <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
-              <span className="hidden sm:inline font-medium">Create Project</span>
-            </button>
-
-            {/* Upload Button */}
-            <button 
-              onClick={() => setIsUploadOpen(true)}
-              className="group h-9 px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
-            >
-              <Upload className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-              <span className="hidden sm:inline font-medium">Upload</span>
-            </button>
           </div>
         </div>
       </header>
 
-      {/* Upload Dialog */}
-      <AssetUpload 
-        isOpen={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        mode="upload"
-      />
 
-      {/* Create Project Dialog */}
-      <AssetUpload 
-        isOpen={isCreateProjectOpen}
-        onClose={() => setIsCreateProjectOpen(false)}
-        mode="create-project"
-      />
     </>
   );
 } 
