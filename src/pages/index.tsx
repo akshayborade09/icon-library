@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import AssetTabs from '@/components/home/AssetTabs';
 import TabSearch from '@/components/layout/TabSearch';
+import { AssetProvider, useAsset } from '@/contexts/AssetContext';
 
 interface Asset {
   id: number;
@@ -55,12 +56,43 @@ function HomePage({ activeTab }: HomePageProps) {
   );
 }
 
+function SuccessToast() {
+  const { showSuccessToast, setShowSuccessToast } = useAsset();
+  
+  if (!showSuccessToast) return null;
+
+  return (
+    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+      <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+          <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+        </div>
+        <span className="font-medium">Assets uploaded successfully!</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('Icons');
 
+  const handleAssetClick = (asset: Asset, type: string) => {
+    console.log('Asset clicked:', asset, type);
+  };
+
+  const handleCreateProject = () => {
+    console.log('Create project clicked');
+  };
+
   return (
-    <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      <HomePage activeTab={activeTab} />
-    </MainLayout>
+    <AssetProvider 
+      handleAssetClick={handleAssetClick}
+      handleCreateProject={handleCreateProject}
+    >
+      <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+        <HomePage activeTab={activeTab} />
+        <SuccessToast />
+      </MainLayout>
+    </AssetProvider>
   );
 }

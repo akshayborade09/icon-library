@@ -26,7 +26,6 @@ export default function MainLayout({ children, activeTab, onTabChange }: MainLay
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header with tabs */}
         <TopNavigation 
-          onToggleSidebar={toggleSidebar} 
           activeTab={activeTab}
           onTabChange={onTabChange}
         />

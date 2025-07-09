@@ -318,34 +318,39 @@
   }
 }
 
-/* Infinite scrolling icon grid with flexible spacing */
+/* Infinite scrolling icon grid - 8 icons per row, center aligned */
 .infinite-icon-grid {
   display: grid;
+  grid-template-columns: repeat(8, 1fr);
   gap: 1.5rem;
-  justify-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  justify-content: center;
   width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
 /* Responsive infinite grid for different screen sizes */
 @media (min-width: 1200px) {
   .infinite-icon-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
+    padding: 0 3rem;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
   .infinite-icon-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 1.5rem;
+    padding: 0 2rem;
   }
 }
 
 @media (max-width: 767px) {
   .infinite-icon-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
+    padding: 0 1rem;
   }
 }
 

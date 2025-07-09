@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Download,
 } from 'lucide-react';
+import { useAsset } from '@/contexts/AssetContext';
 
 interface Asset {
   id: number;
@@ -62,6 +63,7 @@ export default function AssetTabs({
   searchQuery = '',
   onAssetClick 
 }: AssetTabsProps) {
+  const { uploadedAssets } = useAsset();
   const [loadedAssets, setLoadedAssets] = useState<{ [key: string]: Asset[] }>({});
   const [loading, setLoading] = useState(false);
 
@@ -146,6 +148,33 @@ export default function AssetTabs({
   const getCurrentAssets = () => {
     let assets = loadedAssets[activeTab] || [];
     
+    // Add uploaded assets based on active tab
+    const getUploadedAssetsForTab = () => {
+      const tabCategoryMap: { [key: string]: string } = {
+        'Icons': 'icon',
+        'Illustrations': 'illustration', 
+        'Images': 'image',
+        '3D Models': '3d'
+      };
+      
+      const targetCategory = tabCategoryMap[activeTab];
+      if (!targetCategory) return [];
+      
+      return uploadedAssets
+        .filter(asset => asset.category === targetCategory)
+        .map(asset => ({
+          id: parseInt(asset.id, 36), // Convert string ID to number for compatibility
+          name: asset.name,
+          preview: asset.preview,
+          downloads: asset.downloads,
+          size: asset.size
+        }));
+    };
+    
+    // Combine uploaded assets with generated assets
+    const uploadedForTab = getUploadedAssetsForTab();
+    assets = [...uploadedForTab, ...assets];
+    
     // Apply size filter for Icons
     if (activeTab === 'Icons' && selectedSize !== 'all') {
       assets = assets.filter(asset => asset.size === selectedSize);
@@ -158,8 +187,13 @@ export default function AssetTabs({
       );
     }
     
-    // Apply sorting
+    // Apply sorting - Always sort by name in ascending order first
     assets = [...assets].sort((a, b) => {
+      // Primary sort: Alphabetical by name (A-Z)
+      const nameCompare = a.name.localeCompare(b.name);
+      if (nameCompare !== 0) return nameCompare;
+      
+      // Secondary sort: Apply user's selected sort criteria
       switch (sortBy) {
         case 'downloads':
           return b.downloads - a.downloads;

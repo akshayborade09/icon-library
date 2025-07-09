@@ -13,6 +13,7 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  Menu,
 } from 'lucide-react';
 
 interface LeftNavigationProps {
@@ -57,14 +58,37 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
    
 
       <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
-              <Sparkles className="w-4 h-4 text-white" />
+        {collapsed ? (
+          <>
+            {/* Collapsed Header - Hamburger Menu Only */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex justify-center">
+                <button
+                  onClick={onToggle}
+                  className="group p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  <Menu className="h-5 w-5 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+              </div>
             </div>
-            {!collapsed && (
-              <div>
+            
+            {/* Collapsed Logo Section */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex justify-center">
+                <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Expanded Header - Logo + Text + Hamburger */
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1">
                 <h2 className="font-semibold text-gray-900 text-lg">
                   AssetHub
                 </h2>
@@ -72,9 +96,15 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
                   Design System
                 </p>
               </div>
-            )}
+              <button
+                onClick={onToggle}
+                className="group p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                <Menu className="h-5 w-5 transition-transform duration-200 group-hover:rotate-180" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Navigation */}
         <div className="flex-1 p-4">
