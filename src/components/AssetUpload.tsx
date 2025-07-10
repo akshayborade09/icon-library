@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Upload, FileImage, Users, Trash2, Check, Tag, ChevronDown, ChevronRight, ArrowLeft, Plus } from 'lucide-react';
+import { Button, Input, Textarea, Select, SelectItem } from '@heroui/react';
 import Toast from './ui/toast';
 import { useAsset } from '@/contexts/AssetContext';
 
@@ -73,6 +74,42 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Reset all states when modal is closed
+  const resetModalState = useCallback(() => {
+    setCurrentStep(mode === 'create-project' ? 'create-project' : 'upload');
+    setIsUploadMoreMode(false);
+    setAssets([]);
+    setNewAssets([]);
+    setSelectedAssets([]);
+    setShowTaggingBar(false);
+    setCategorizedAssets({
+      icon: [],
+      illustration: [],
+      image: [],
+      '3d': []
+    });
+    setCollapsedCategories({
+      icon: true,
+      illustration: true,
+      image: true,
+      '3d': true
+    });
+    setProjectName('');
+    setProjectDescription('');
+    setInviteEmail('');
+    setInvitedMembers([]);
+    setEditingAssets({});
+    setShowToast(false);
+    setToastMessage('');
+  }, [mode]);
+
+  // Reset state when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      resetModalState();
+    }
+  }, [isOpen, resetModalState]);
 
   const generateThumbnail = (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -468,58 +505,72 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
       {/* Right Side Overlay - 1/3 screen width with proper positioning context */}
-      <div className="w-1/3 h-full bg-white shadow-xl flex flex-col relative overflow-hidden">
+      <div className="w-1/3 h-full bg-white dark:bg-gray-950 shadow-xl flex flex-col relative overflow-hidden border-l border-gray-200 dark:border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
           <div className="flex items-center space-x-3">
             {/* Back buttons for each step */}
             {isUploadMoreMode && (
-              <button
+              <Button
                 onClick={handleBackFromUploadMore}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                variant="light"
+                isIconOnly
+                size="sm"
+                className="p-2"
               >
-                <ArrowLeft className="h-5 w-5 text-gray-500" />
-              </button>
+                <ArrowLeft className="h-5 w-5" strokeWidth={2} />
+              </Button>
             )}
             {!isUploadMoreMode && currentStep === 'upload' && mode === 'create-project' && (
-              <button
+              <Button
                 onClick={handleBackToCreateProject}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                variant="light"
+                isIconOnly
+                size="sm"
+                className="p-2"
               >
-                <ArrowLeft className="h-5 w-5 text-gray-500" />
-              </button>
+                <ArrowLeft className="h-5 w-5" strokeWidth={2} />
+              </Button>
             )}
             {currentStep === 'tag-assets' && (
-              <button
+              <Button
                 onClick={handleBackToUpload}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                variant="light"
+                isIconOnly
+                size="sm"
+                className="p-2"
               >
-                <ArrowLeft className="h-5 w-5 text-gray-500" />
-              </button>
+                <ArrowLeft className="h-5 w-5" strokeWidth={2} />
+              </Button>
             )}
 
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
               {getStepTitle()}
             </h2>
           </div>
           <div className="flex items-center space-x-2">
             {currentStep === 'tag-assets' && !isUploadMoreMode && (
-              <button
+              <Button
                 onClick={handleUploadMore}
-                className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                color="primary"
+                size="sm"
+                startContent={<Plus className="h-4 w-4" strokeWidth={2} />}
+                className="font-medium"
               >
-                <Plus className="h-4 w-4" />
-                <span>Upload More</span>
-              </button>
+                Upload More
+              </Button>
             )}
-            <button
+            <Button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              variant="light"
+              isIconOnly
+              size="sm"
+              className="p-2"
             >
-              <X className="h-5 w-5 text-gray-500" />
-            </button>
+              <X className="h-5 w-5" strokeWidth={2} />
+            </Button>
           </div>
         </div>
 
@@ -532,73 +583,93 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
               {/* Step 1: Create Project */}
               {currentStep === 'create-project' && (
                 <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={projectName}
-                      onChange={(e) => setProjectName(e.target.value)}
-                      placeholder="Enter project name"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+                  <Input
+                    label="Project Name"
+                    placeholder="Enter project name"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    isRequired
+                    variant="bordered"
+                    labelPlacement="outside"
+                    classNames={{
+                      label: "text-sm font-medium text-gray-700 dark:text-gray-300",
+                      input: "text-gray-900 dark:text-gray-100",
+                      inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                    }}
+                  />
+
+                  <Textarea
+                    label="Project Description"
+                    placeholder="Enter some information of this project"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                    variant="bordered"
+                    labelPlacement="outside"
+                    minRows={4}
+                    classNames={{
+                      label: "text-sm font-medium text-gray-700 dark:text-gray-300",
+                      input: "text-gray-900 dark:text-gray-100",
+                      inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                    }}
+                  />
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Description
-                    </label>
-                    <textarea
-                      value={projectDescription}
-                      onChange={(e) => setProjectDescription(e.target.value)}
-                      placeholder="Enter some information of this project"
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Invite Members
                     </label>
                     <div className="flex space-x-2">
-                      <input
+                      <Input
                         type="email"
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                         placeholder="Email comma separated"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        variant="bordered"
+                        className="flex-1"
+                        classNames={{
+                          input: "text-gray-900 dark:text-gray-100",
+                          inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                        }}
                       />
-                      <button
+                      <Button
                         onClick={handleInviteMember}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        color="primary"
+                        variant="solid"
+                        className="font-medium"
                       >
                         Invite
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
                   {/* Invited Members List */}
                   {invitedMembers.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700">Invited Members</h4>
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Invited Members</h4>
                       {invitedMembers.map((member) => (
-                        <div key={member.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                        <div key={member.id} className="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
                           <img
                             src={member.thumbnail}
                             alt={member.email}
-                            className="w-8 h-8 rounded-full"
+                            className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600"
                           />
-                          <span className="flex-1 text-sm text-gray-900">{member.email}</span>
-                          <select
-                            value={member.permission}
-                            onChange={(e) => handlePermissionChange(member.id, e.target.value as 'view' | 'edit')}
-                            className="text-sm border border-gray-300 rounded px-2 py-1"
+                          <span className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">{member.email}</span>
+                          <Select
+                            selectedKeys={[member.permission]}
+                            onSelectionChange={(keys) => {
+                              const selectedKey = Array.from(keys)[0] as string;
+                              handlePermissionChange(member.id, selectedKey as 'view' | 'edit');
+                            }}
+                            size="sm"
+                            variant="bordered"
+                            className="w-32"
+                            classNames={{
+                              trigger: "border-gray-300 dark:border-gray-600",
+                              value: "text-gray-900 dark:text-gray-100"
+                            }}
                           >
-                            <option value="view">Can View</option>
-                            <option value="edit">Can Edit</option>
-                          </select>
+                            <SelectItem key="view">Can View</SelectItem>
+                            <SelectItem key="edit">Can Edit</SelectItem>
+                          </Select>
                         </div>
                       ))}
                     </div>
@@ -606,23 +677,26 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
                   {/* Upload Assets Section */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Upload Assets
                     </label>
                     <div
-                      className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors"
+                      className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-300 bg-gray-50/50 dark:bg-gray-800/20 hover:bg-gray-100/50 dark:hover:bg-gray-800/40"
                       onDrop={handleDrop}
                       onDragOver={(e) => e.preventDefault()}
                     >
-                      <Upload className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-                      <h3 className="text-base font-medium text-gray-900 mb-1">Drag & Drop files here</h3>
-                      <p className="text-gray-500 mb-3 text-sm">Acceptable formats: PNG, JPG, SVG, PDF</p>
-                      <button
+                      <Upload className="h-10 w-10 text-gray-400 dark:text-gray-500 mx-auto mb-4" strokeWidth={1.5} />
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Drag & Drop files here</h3>
+                      <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">Acceptable formats: PNG, JPG, SVG, PDF</p>
+                      <Button
                         onClick={handleFileSelect}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        color="primary"
+                        variant="solid"
+                        size="md"
+                        className="font-medium"
                       >
                         Choose Files
-                      </button>
+                      </Button>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -639,19 +713,22 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
               {/* Step 2: Upload Assets */}
               {currentStep === 'upload' && (
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors"
+                  className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-16 text-center hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-300 bg-gray-50/50 dark:bg-gray-800/20 hover:bg-gray-100/50 dark:hover:bg-gray-800/40"
                   onDrop={handleDrop}
                   onDragOver={(e) => e.preventDefault()}
                 >
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Drag & Drop files here</h3>
-                  <p className="text-gray-500 mb-4">Acceptable formats: PNG, JPG, SVG, PDF</p>
-                  <button
+                  <Upload className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-6" strokeWidth={1.5} />
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Drag & Drop files here</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6 text-base">Acceptable formats: PNG, JPG, SVG, PDF</p>
+                  <Button
                     onClick={handleFileSelect}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    color="primary"
+                    variant="solid"
+                    size="lg"
+                    className="font-medium"
                   >
                     Choose Files
-                  </button>
+                  </Button>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -667,27 +744,33 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
               {currentStep === 'progress' && (
                 <div className="space-y-4">
                   {currentAssets.map((asset) => (
-                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
-                      <div className={`w-16 h-16 bg-gray-100 rounded-lg overflow-hidden ${
+                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-default-200 dark:border-default-100 rounded-xl bg-default-50 dark:bg-default-100/20 transition-all duration-200">
+                      <div className={`w-16 h-16 bg-default-100 dark:bg-default-200/50 rounded-xl overflow-hidden ${
                         asset.aspectRatio === '1x1' ? 'aspect-square' :
                         asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
                       }`}>
                         <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{asset.name}</h4>
-                        <p className="text-sm text-gray-500">{asset.size}</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <h4 className="font-medium text-foreground">{asset.name}</h4>
+                        <p className="text-sm text-default-500">{asset.size}</p>
+                        <div className="w-full bg-default-200 dark:bg-default-300/30 rounded-full h-2 mt-2 overflow-hidden">
                           <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-primary-500 h-2 rounded-full transition-all duration-500 ease-out"
                             style={{ width: `${asset.progress}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">{Math.round(asset.progress)}%</p>
+                        <p className="text-xs text-default-500 mt-1 font-medium">{Math.round(asset.progress)}%</p>
                       </div>
-                      <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                        <X className="h-4 w-4" />
-                      </button>
+                      <Button
+                        isIconOnly
+                        variant="light"
+                        color="danger"
+                        className="text-default-400 hover:text-danger-500"
+                        size="sm"
+                      >
+                        <X className="h-4 w-4" strokeWidth={2} />
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -700,15 +783,15 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                 <div className="space-y-4">
                   {/* Project Summary - Only show when in create-project mode */}
                   {mode === 'create-project' && (
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-semibold text-gray-900">{projectName}</h3>
+                  <div className="p-4 bg-default-50 dark:bg-default-100/20 rounded-xl border border-default-200 dark:border-default-100">
+                    <h3 className="font-semibold text-foreground">{projectName}</h3>
                     {projectDescription && (
-                      <p className="text-sm text-gray-600 mt-1">{projectDescription}</p>
+                      <p className="text-sm text-default-600 dark:text-default-500 mt-1">{projectDescription}</p>
                     )}
                     {invitedMembers.length > 0 && (
                       <div className="flex items-center space-x-2 mt-2">
-                        <Users className="h-4 w-4 text-gray-500" />
-                        <span className="text-sm text-gray-500">{invitedMembers.length} member{invitedMembers.length > 1 ? 's' : ''}</span>
+                        <Users className="h-4 w-4 text-default-500" strokeWidth={2} />
+                        <span className="text-sm text-default-500">{invitedMembers.length} member{invitedMembers.length > 1 ? 's' : ''}</span>
                       </div>
                     )}
                   </div>
@@ -736,43 +819,43 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                   {/* Tagged Assets - Collapsed Sections */}
                   {(Object.keys(categorizedAssets) as Array<keyof typeof categorizedAssets>).map((category) => (
                     categorizedAssets[category].length > 0 && (
-                      <div key={category} className="border border-gray-200 rounded-lg mb-4">
+                      <div key={category} className="border border-default-200 dark:border-default-100 rounded-xl mb-4 overflow-hidden">
                         <button
                           onClick={() => toggleCategoryCollapse(category)}
-                          className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                          className="w-full flex items-center justify-between p-4 text-left hover:bg-default-50 dark:hover:bg-default-100/20 transition-colors"
                         >
                           <div className="flex items-center space-x-2">
                             {collapsedCategories[category] ? 
-                              <ChevronRight className="h-4 w-4 text-gray-500" /> : 
-                              <ChevronDown className="h-4 w-4 text-gray-500" />
+                              <ChevronRight className="h-4 w-4 text-default-500" strokeWidth={2} /> : 
+                              <ChevronDown className="h-4 w-4 text-default-500" strokeWidth={2} />
                             }
-                            <span className="font-medium capitalize text-gray-900">{category}</span>
-                            <span className="text-sm text-gray-500">({categorizedAssets[category].length} asset{categorizedAssets[category].length > 1 ? 's' : ''})</span>
+                            <span className="font-medium capitalize text-foreground">{category}</span>
+                            <span className="text-sm text-default-500">({categorizedAssets[category].length} asset{categorizedAssets[category].length > 1 ? 's' : ''})</span>
                           </div>
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
                         </button>
                         
                         {!collapsedCategories[category] && (
-                          <div className="border-t border-gray-100 p-4 pt-2 space-y-2">
+                          <div className="border-t border-default-100 dark:border-default-200/50 p-4 pt-2 space-y-2 bg-default-25 dark:bg-default-50/10">
                             {categorizedAssets[category]
                               .sort((a, b) => a.name.localeCompare(b.name))
                               .map((asset) => (
-                                <div key={asset.id} className="flex items-center space-x-4 p-3 bg-white rounded-lg w-full">
+                                <div key={asset.id} className="flex items-center space-x-4 p-3 bg-background dark:bg-default-100/20 rounded-xl w-full border border-default-100 dark:border-default-200/30 hover:border-default-300 dark:hover:border-default-200/50 transition-colors">
                                 <input
                                   type="checkbox"
                                   checked={selectedAssets.includes(asset.id)}
                                   onChange={() => toggleAssetSelection(asset.id)}
-                                  className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                                  className="h-4 w-4 text-primary-600 rounded border-default-300 dark:border-default-400 focus:ring-primary-500 focus:ring-2"
                                 />
-                                <div className={`w-12 h-12 bg-gray-100 rounded-lg overflow-hidden ${
+                                <div className={`w-12 h-12 bg-default-100 dark:bg-default-200/50 rounded-xl overflow-hidden ${
                                   asset.aspectRatio === '1x1' ? 'aspect-square' :
                                   asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
                                 }`}>
                                   <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-1">
-                                  <h4 className="font-medium text-gray-900">{asset.name}</h4>
-                                  <p className="text-sm text-gray-500">{asset.size}</p>
+                                  <h4 className="font-medium text-foreground">{asset.name}</h4>
+                                  <p className="text-sm text-default-500">{asset.size}</p>
                                 </div>
                               </div>
                             ))}
@@ -785,27 +868,27 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                   {/* Untagged Assets */}
                   {assets.length > 0 && (
                     <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-gray-900">Untagged Assets</h4>
+                      <h4 className="text-lg font-semibold text-foreground">Untagged Assets</h4>
                       <div className="space-y-2">
                         {assets
                           .sort((a, b) => a.name.localeCompare(b.name))
                           .map((asset) => (
-                                                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg w-full">
+                                                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-default-200 dark:border-default-100 rounded-xl w-full bg-default-50 dark:bg-default-100/20 hover:border-default-300 dark:hover:border-default-200/50 transition-colors">
                           <input
                             type="checkbox"
                             checked={selectedAssets.includes(asset.id)}
                             onChange={() => toggleAssetSelection(asset.id)}
-                            className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                            className="h-4 w-4 text-primary-600 rounded border-default-300 dark:border-default-400 focus:ring-primary-500 focus:ring-2"
                           />
-                          <div className={`w-16 h-16 bg-gray-100 rounded-lg overflow-hidden ${
+                          <div className={`w-16 h-16 bg-default-100 dark:bg-default-200/50 rounded-xl overflow-hidden ${
                             asset.aspectRatio === '1x1' ? 'aspect-square' :
                             asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
                           }`}>
                             <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{asset.name}</h4>
-                            <p className="text-sm text-gray-500">{asset.size}</p>
+                              <h4 className="font-medium text-foreground">{asset.name}</h4>
+                            <p className="text-sm text-default-500">{asset.size}</p>
                           </div>
                         </div>
                       ))}
@@ -821,9 +904,9 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
           {/* Fixed Bottom Section - Action buttons for each step */}
           {currentStep !== 'progress' && (
-          <div className="flex-shrink-0 p-6 bg-white border-t border-gray-200">
+          <div className="flex-shrink-0 p-6 bg-background dark:bg-default-50/50 border-t border-default-200 dark:border-default-100">
             {currentStep === 'create-project' && (
-              <button 
+              <Button 
                 onClick={() => {
                   const hasUploadedAssets = assets.length > 0 || Object.values(categorizedAssets).some(cat => cat.length > 0);
                   if (hasUploadedAssets) {
@@ -834,25 +917,29 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                     handleContinueFromProject();
                   }
                 }}
-                disabled={!projectName.trim()}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                isDisabled={!projectName.trim()}
+                color="primary"
+                className="w-full font-medium"
+                size="lg"
               >
                 {(() => {
                   const hasUploadedAssets = assets.length > 0 || Object.values(categorizedAssets).some(cat => cat.length > 0);
                   return hasUploadedAssets ? 'Next' : 'Continue';
                 })()}
-              </button>
+              </Button>
             )}
             
             {/* No button for upload step - automatically proceeds after upload completion */}
 
             {currentStep === 'tag-assets' && (
-              <button 
+              <Button 
                 onClick={handleContinueFromTagging}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                color="primary"
+                className="w-full font-medium"
+                size="lg"
               >
                 Finish
-              </button>
+              </Button>
             )}
 
 
@@ -861,20 +948,22 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
           {/* Floating Tagging Bar - Only show in tag-assets step */}
           {showTaggingBar && currentStep === 'tag-assets' && (
-            <div className="absolute left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 flex-shrink-0 mx-4 mb-10 rounded-xl bottom-20">
+            <div className="absolute left-0 right-0 bg-background dark:bg-default-100/80 backdrop-blur-md border-t border-default-200 dark:border-default-100 p-4 flex-shrink-0 mx-4 mb-10 rounded-xl bottom-20">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-foreground">
                   Tag {selectedAssets.length} asset{selectedAssets.length > 1 ? 's' : ''} as:
                 </span>
                 <div className="flex space-x-2">
                   {(['icon', 'illustration', 'image', '3d'] as const).map((category) => (
-                    <button
+                    <Button
                       key={category}
                       onClick={() => handleCategoryTag(category)}
-                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors capitalize"
+                      color="primary"
+                      size="sm"
+                      className="capitalize font-medium"
                     >
                       {category}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

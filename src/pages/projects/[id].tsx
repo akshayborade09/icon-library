@@ -218,7 +218,7 @@ function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
         <div className="flex-1 overflow-hidden">
           <main className="p-6">
@@ -239,7 +239,7 @@ function ProjectDetailPage() {
 
   return (
     <>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         {/* Sidebar */}
         <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
         

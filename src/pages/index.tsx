@@ -6,6 +6,7 @@ import AssetTabs from '@/components/home/AssetTabs';
 import TabSearch from '@/components/layout/TabSearch';
 import AssetUpload from '@/components/AssetUpload';
 import { AssetProvider, useAsset } from '@/contexts/AssetContext';
+import { Button } from '@heroui/react';
 import { Plus, Upload } from 'lucide-react';
 
 interface Asset {
@@ -69,9 +70,9 @@ function SuccessToast() {
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+      <div className="bg-success-500 text-white px-6 py-4 rounded-xl shadow-lg flex items-center space-x-3 backdrop-blur-md border border-success-600">
         <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-          <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+          <div className="w-2 h-2 bg-success-500 rounded-full"></div>
         </div>
         <span className="font-medium">Assets uploaded successfully!</span>
       </div>
@@ -180,7 +181,7 @@ export default function Home() {
       handleAssetClick={handleAssetClick}
       handleCreateProject={handleCreateProject}
     >
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         {/* Sidebar - Full height */}
         <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
         
@@ -193,22 +194,30 @@ export default function Home() {
             actions={
               <>
                 {/* Create Project Button */}
-                <button 
+                <Button 
                   onClick={handleCreateProject}
-                  className="group h-9 px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 hover:shadow-sm active:scale-95"
+                  variant="bordered"
+                  size="sm"
+                  className="h-10 px-4 font-medium shadow-sm"
+                  startContent={
+                    <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" strokeWidth={2} />
+                  }
                 >
-                  <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
-                  <span className="hidden sm:inline font-medium">Create Project</span>
-                </button>
+                  <span className="hidden sm:inline">Create Project</span>
+                </Button>
 
                 {/* Upload Button */}
-                <button 
+                <Button 
                   onClick={handleUpload}
-                  className="group h-9 px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
+                  color="primary"
+                  size="sm"
+                  className="h-10 px-4 font-medium shadow-md"
+                  startContent={
+                    <Upload className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5" strokeWidth={2} />
+                  }
                 >
-                  <Upload className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-                  <span className="hidden sm:inline font-medium">Upload</span>
-                </button>
+                  <span className="hidden sm:inline">Upload</span>
+                </Button>
               </>
             }
           />

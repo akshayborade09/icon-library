@@ -29,7 +29,7 @@ export default function MainLayout({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar - Full height */}
       <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
       

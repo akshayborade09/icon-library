@@ -6,6 +6,7 @@ import {
   Search,
   ChevronDown,
 } from 'lucide-react';
+import { Button, Input } from '@heroui/react';
 import { useAsset } from '@/contexts/AssetContext';
 
 interface Asset {
@@ -255,7 +256,7 @@ export default function AssetTabs({
 
   return (
     <div 
-      className="ml-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+      className="ml-auto overflow-y-auto scrollbar-thin scrollbar-thumb-default-300 dark:scrollbar-thumb-default-500 scrollbar-track-default-100 dark:scrollbar-track-default-200 bg-background"
       onScroll={handleScroll}
       style={{
         height: 'calc(100vh - 132px)',
@@ -267,14 +268,21 @@ export default function AssetTabs({
         <div className="flex items-center max-w-[1400px] mx-auto gap-4 px-10">
           {/* Search */}
           <div className="flex-1">
-            <form onSubmit={handleLocalSearchSubmit} className="relative group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 transition-all duration-200 group-hover:text-blue-500 group-focus-within:text-blue-500" />
-              <input
+            <form onSubmit={handleLocalSearchSubmit}>
+              <Input
                 type="search"
                 placeholder={`Search ${activeTab.toLowerCase()}...`}
                 value={localSearchQuery}
                 onChange={(e) => handleLocalSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 transition-all duration-200"
+                startContent={<Search className="h-4 w-4 text-default-400" strokeWidth={2} />}
+                variant="bordered"
+                radius="lg"
+                classNames={{
+                  base: "w-full",
+                  mainWrapper: "h-full",
+                  input: "text-small",
+                  inputWrapper: "h-12 bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 data-[hover=true]:border-default-400 group-data-[focus=true]:border-primary-500"
+                }}
               />
             </form>
           </div>
@@ -284,16 +292,18 @@ export default function AssetTabs({
             <div className="flex items-center gap-3">
               {/* Size Filter */}
               <div className="relative">
-                <button
+                <Button
                   onClick={() => setSizeDropdownOpen(!sizeDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:border-gray-400 transition-colors bg-white"
+                  variant="bordered"
+                  radius="lg"
+                  endContent={<ChevronDown className="h-4 w-4" strokeWidth={2} />}
+                  className="min-w-[100px] bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
                 >
                   Size: {selectedSize === 'all' ? 'All' : selectedSize}
-                  <ChevronDown className="h-4 w-4" />
-                </button>
+                </Button>
                 
                 {sizeDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                  <div className="absolute top-full left-0 mt-2 bg-content1 border border-default-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
                     {['all', '16px', '24px', '32px'].map((size) => (
                       <button
                         key={size}
@@ -301,7 +311,7 @@ export default function AssetTabs({
                           onSizeChange?.(size);
                           setSizeDropdownOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                        className="block w-full text-left px-4 py-3 text-small text-default-700 dark:text-default-600 hover:bg-default-100 dark:hover:bg-default-200 transition-colors"
                       >
                         {size === 'all' ? 'All Sizes' : size}
                       </button>
@@ -312,16 +322,18 @@ export default function AssetTabs({
 
               {/* Sort */}
               <div className="relative">
-                <button
+                <Button
                   onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:border-gray-400 transition-colors bg-white"
+                  variant="bordered"
+                  radius="lg"
+                  endContent={<ChevronDown className="h-4 w-4" strokeWidth={2} />}
+                  className="min-w-[120px] bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
                 >
                   Sort: {sortBy === 'popular' ? 'Popular' : sortBy === 'newest' ? 'Newest' : 'Downloads'}
-                  <ChevronDown className="h-4 w-4" />
-                </button>
+                </Button>
                 
                 {sortDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                  <div className="absolute top-full left-0 mt-2 bg-content1 border border-default-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
                     {[
                       { value: 'popular', label: 'Popular' },
                       { value: 'newest', label: 'Newest' },
@@ -333,7 +345,7 @@ export default function AssetTabs({
                           onSortChange?.(option.value);
                           setSortDropdownOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                        className="block w-full text-left px-4 py-3 text-small text-default-700 dark:text-default-600 hover:bg-default-100 dark:hover:bg-default-200 transition-colors"
                       >
                         {option.label}
                       </button>
@@ -348,16 +360,18 @@ export default function AssetTabs({
           {activeTab !== 'Icons' && (
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button
+                <Button
                   onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:border-gray-400 transition-colors bg-white"
+                  variant="bordered"
+                  radius="lg"
+                  endContent={<ChevronDown className="h-4 w-4" strokeWidth={2} />}
+                  className="min-w-[120px] bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
                 >
                   Sort: {sortBy === 'popular' ? 'Popular' : sortBy === 'newest' ? 'Newest' : 'Downloads'}
-                  <ChevronDown className="h-4 w-4" />
-                </button>
+                </Button>
                 
                 {sortDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                  <div className="absolute top-full left-0 mt-2 bg-content1 border border-default-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
                     {[
                       { value: 'popular', label: 'Popular' },
                       { value: 'newest', label: 'Newest' },
@@ -369,7 +383,7 @@ export default function AssetTabs({
                           onSortChange?.(option.value);
                           setSortDropdownOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                        className="block w-full text-left px-4 py-3 text-small text-default-700 dark:text-default-600 hover:bg-default-100 dark:hover:bg-default-200 transition-colors"
                       >
                         {option.label}
                       </button>
@@ -383,34 +397,42 @@ export default function AssetTabs({
       </div>
 
       {/* Icon Grid */}
-      <div className="infinite-icon-grid px-16">
+      <div className="infinite-icon-grid max-w-[1400px] mx-auto">
         {getCurrentAssets().map((asset) => (
           <div
             key={asset.id}
             onClick={() => handleAssetClick(asset, activeTab)}
-            className="group bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden w-full max-w-[220px]"
+            className="group bg-content1 border border-default-200 dark:border-default-300 rounded-large hover:bg-content2 dark:hover:bg-default-100 hover:border-default-400 dark:hover:border-default-500 transition-all duration-200 cursor-pointer overflow-hidden w-full"
           >
             {/* Asset Preview */}
-            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
-              <div className="text-4xl group-hover:scale-110 transition-transform duration-300">
+            <div className="aspect-square bg-default-50 dark:bg-default-100 flex items-center justify-center relative overflow-hidden">
+              <div className="text-4xl text-default-600 dark:text-default-500">
                 {asset.preview}
               </div>
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300" />
             </div>
             
             {/* Asset Info */}
-            <div className="p-3">
+            <div className="p-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                <h4 className="text-small font-medium text-default-900 dark:text-default-100 truncate">
                   {asset.name}
                 </h4>
-                <button className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Download className="h-4 w-4 text-gray-500 hover:text-blue-600" />
-                </button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-default-500 hover:text-primary-500"
+                >
+                  <Download className="h-4 w-4" strokeWidth={2} />
+                </Button>
               </div>
-              <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                <span>{asset.downloads.toLocaleString()} downloads</span>
-                {asset.size && <span>{asset.size}</span>}
+              <div className="flex items-center justify-between text-tiny text-default-500 mt-2">
+                <span className="font-medium">{asset.downloads.toLocaleString()} downloads</span>
+                {asset.size && (
+                  <span className="px-2 py-1 bg-default-100 dark:bg-default-200 text-default-600 dark:text-default-700 rounded-medium font-medium">
+                    {asset.size}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -418,9 +440,9 @@ export default function AssetTabs({
 
         {/* Loading Indicator */}
         {loading && (
-          <div className="flex justify-center items-center py-8 col-span-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading more {activeTab.toLowerCase()}...</span>
+          <div className="flex justify-center items-center py-12 col-span-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-default-200 dark:border-default-300 border-t-primary-500"></div>
+            <span className="ml-3 text-default-600 dark:text-default-500 font-medium">Loading more {activeTab.toLowerCase()}...</span>
           </div>
         )}
       </div>

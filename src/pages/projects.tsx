@@ -82,7 +82,7 @@ function ProjectsPage() {
 
   if (projects.length === 0) {
     return (
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
         <div className="flex-1 overflow-hidden">
           <div className="animate-pulse px-6 py-8">
@@ -101,7 +101,7 @@ function ProjectsPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+            <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar */}
       <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
       

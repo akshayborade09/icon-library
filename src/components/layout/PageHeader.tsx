@@ -14,13 +14,13 @@ export default function PageHeader({
   className = '' 
 }: PageHeaderProps) {
   return (
-    <div className={`bg-white border-b border-gray-200 px-6 py-4 ${className}`}>
+    <div className={`bg-content1 border-b border-divider px-6 py-6 ${className}`}>
       <div className="mx-auto">
         <div className="flex items-center justify-between">
           {/* Title and description */}
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-            <p className="text-gray-600 mt-1">{description}</p>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">{title}</h1>
+            <p className="text-default-600 mt-1 text-base">{description}</p>
           </div>
           
           {/* Action buttons */}

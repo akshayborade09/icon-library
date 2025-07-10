@@ -107,21 +107,21 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
       />
       
       {/* Modal - Main Vertical Flex */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative bg-content1 rounded-2xl border border-divider max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="absolute top-4 right-4 z-10 p-2 hover:bg-default-100 dark:hover:bg-default-200 rounded-lg transition-colors"
         >
-          <X className="h-5 w-5 text-gray-500" />
+                      <X className="h-5 w-5 text-default-500" strokeWidth={2} />
         </button>
 
         {/* 1st Section - Icon Info + Color (Horizontal Flex) */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-200">
+        <div className="flex items-start justify-between p-6 border-b border-divider">
           {/* Left: Icon + Info */}
           <div className="flex items-center gap-4">
             {/* Icon Thumbnail 64x64 */}
-            <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-200">
+            <div className="w-16 h-16 bg-default-50 dark:bg-default-100 rounded-lg flex items-center justify-center border border-default-200">
               <img 
                 src={asset.thumbnail} 
                 alt={asset.name}
@@ -132,20 +132,20 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
             
             {/* Icon Name and Size */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">{asset.name}</h2>
-              <p className="text-sm text-gray-500">{asset.size}</p>
+              <h2 className="text-lg font-semibold text-foreground">{asset.name}</h2>
+              <p className="text-sm text-default-500">{asset.size}</p>
             </div>
           </div>
 
           {/* Right: Apply Color */}
           <div className="flex flex-col items-end gap-3 mr-12">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">Color:</span>
+              <span className="text-sm font-medium text-foreground">Color:</span>
               <input
                 type="text"
                 value={selectedColor}
                 onChange={(e) => setSelectedColor(e.target.value)}
-                className="w-20 px-2 py-1 text-xs border border-gray-300 rounded"
+                className="w-20 px-2 py-1 text-xs border border-default-300 rounded bg-background"
                 placeholder="#000"
               />
             </div>
@@ -157,7 +157,7 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
                   key={token.name}
                   onClick={() => setSelectedColor(token.value)}
                   className={`w-6 h-6 rounded border-2 transition-all ${
-                    selectedColor === token.value ? 'border-blue-500 scale-110' : 'border-gray-200'
+                    selectedColor === token.value ? 'border-primary-500 scale-110' : 'border-default-200'
                   }`}
                   style={{ backgroundColor: token.value }}
                   title={token.name}
@@ -168,12 +168,12 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
         </div>
 
         {/* 2nd Section - Download Options (Horizontal Flex) */}
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-divider">
           <div className="flex items-center gap-2 flex-wrap">
             {downloadOptions.map((option, index) => (
               <button
                 key={index}
-                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-300"
+                className="px-3 py-1.5 text-sm bg-default-100 hover:bg-default-200 rounded-md transition-colors border border-default-300 text-foreground"
               >
                 {option.label}
               </button>
@@ -182,7 +182,7 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
         </div>
 
         {/* 3rd Section - Tags (Horizontal Flex) */}
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-divider">
           <div className="flex items-center gap-2 flex-wrap">
             {tabs.map((tab) => (
               <button
@@ -190,8 +190,8 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
                   activeTab === tab.key 
-                    ? 'bg-black text-white border-black' 
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    ? 'bg-primary-500 text-primary-foreground border-primary-500' 
+                    : 'bg-content1 text-foreground border-default-300 hover:bg-default-100'
                 }`}
               >
                 {tab.label}
@@ -203,20 +203,20 @@ export default function AssetModal({ asset, isOpen, onClose }: AssetModalProps) 
         {/* Tab Content Details */}
         <div className="px-6 py-4 max-h-60 overflow-y-auto">
           {activeTab === 'tags' ? (
-            <div className="text-sm text-gray-700 whitespace-pre-line">
+            <div className="text-sm text-foreground whitespace-pre-line">
               {codeExamples.tags}
             </div>
           ) : (
             <div className="relative">
-              <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto">
+              <pre className="bg-default-900 text-default-100 p-3 rounded-lg text-xs overflow-x-auto">
                 <code>{codeExamples[activeTab as keyof typeof codeExamples]}</code>
               </pre>
               <button
                 onClick={() => navigator.clipboard.writeText(codeExamples[activeTab as keyof typeof codeExamples])}
-                className="absolute top-2 right-2 p-1.5 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                className="absolute top-2 right-2 p-1.5 bg-default-800 hover:bg-default-700 rounded transition-colors"
                 title="Copy code"
               >
-                <Copy className="h-3 w-3 text-gray-300" />
+                                  <Copy className="h-3 w-3 text-default-300" />
               </button>
             </div>
           )}
