@@ -197,10 +197,10 @@ export default function Home() {
                 <Button 
                   onClick={handleCreateProject}
                   variant="bordered"
-                  size="sm"
-                  className="h-10 px-4 font-medium shadow-sm"
+                  size="md"
+                  className="h-10 px-4 font-semibold border-1 border-gray-200 rounded-full hover:bg-gray-200"
                   startContent={
-                    <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" strokeWidth={2} />
+                    <Plus className="h-5 w-5 transition-transform duration-200" strokeWidth={2} />
                   }
                 >
                   <span className="hidden sm:inline">Create Project</span>
@@ -210,10 +210,10 @@ export default function Home() {
                 <Button 
                   onClick={handleUpload}
                   color="primary"
-                  size="sm"
-                  className="h-10 px-4 font-medium shadow-md"
+                  size="md"
+                  className="h-10 px-4 font-semibold border-1 border-gray-200 rounded-full hover:bg-primary-600"
                   startContent={
-                    <Upload className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5" strokeWidth={2} />
+                    <Upload className="h-4 w-4 transition-transform duration-200" strokeWidth={2} />
                   }
                 >
                   <span className="hidden sm:inline">Upload</span>

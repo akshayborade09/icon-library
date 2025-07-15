@@ -113,9 +113,9 @@ function ProjectsPage() {
           actions={
             <button
               onClick={handleCreateProject}
-              className="group h-9 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
+              className="group h-9 px-4 py-2 bg-blue-600 text-white hover:bg-blue-800 rounded-3xl transition-all duration-200 flex items-center gap-2 hover:scale-100 active:scale-95"
             >
-              <Plus className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
+              <Plus className="h-4 w-4 transition-transform duration-200" />
               Create Project
             </button>
           }

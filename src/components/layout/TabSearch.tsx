@@ -42,18 +42,18 @@ export default function TabSearch({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-6 py-4">
+    <div className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 py-4">
       <div className="flex items-center gap-4">
         {/* Search */}
         <div className="flex-1">
           <form onSubmit={handleSearch} className="relative group">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 transition-all duration-200 group-hover:text-primary-500 group-focus-within:text-primary-500" strokeWidth={2} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 transition-all duration-200 group-hover:text-gray-500 group-focus-within:text-gray-500" strokeWidth={2} />
             <input
               type="search"
               placeholder={`Search ${activeTab.toLowerCase()}...`}
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2 border-1 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-full focus:outline-none focus:bg-gray-100 focus:border-transparent hover:bg-gray-50 dark:hover:border-gray-600 transition-all duration-200 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </form>
         </div>
@@ -65,7 +65,7 @@ export default function TabSearch({
             <div className="relative">
               <button
                 onClick={() => setSizeDropdownOpen(!sizeDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
+                className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
               >
                 Size: {selectedSize === 'all' ? 'All' : selectedSize}
                 <ChevronDown className="h-4 w-4" strokeWidth={2} />
@@ -93,7 +93,7 @@ export default function TabSearch({
             <div className="relative">
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
+                className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
               >
                 Sort: {sortBy === 'popular' ? 'Popular' : sortBy === 'newest' ? 'Newest' : 'Downloads'}
                 <ChevronDown className="h-4 w-4" strokeWidth={2} />
@@ -129,7 +129,7 @@ export default function TabSearch({
             <div className="relative">
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
+                className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-200"
               >
                 Sort: {sortBy === 'popular' ? 'Popular' : sortBy === 'newest' ? 'Newest' : 'Downloads'}
                 <ChevronDown className="h-4 w-4" strokeWidth={2} />

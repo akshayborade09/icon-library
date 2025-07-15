@@ -819,43 +819,43 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                   {/* Tagged Assets - Collapsed Sections */}
                   {(Object.keys(categorizedAssets) as Array<keyof typeof categorizedAssets>).map((category) => (
                     categorizedAssets[category].length > 0 && (
-                      <div key={category} className="border border-default-200 dark:border-default-100 rounded-xl mb-4 overflow-hidden">
+                      <div key={category} className="border border-gray-200 rounded-lg mb-4">
                         <button
                           onClick={() => toggleCategoryCollapse(category)}
-                          className="w-full flex items-center justify-between p-4 text-left hover:bg-default-50 dark:hover:bg-default-100/20 transition-colors"
+                          className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
                         >
                           <div className="flex items-center space-x-2">
                             {collapsedCategories[category] ? 
-                              <ChevronRight className="h-4 w-4 text-default-500" strokeWidth={2} /> : 
-                              <ChevronDown className="h-4 w-4 text-default-500" strokeWidth={2} />
+                              <ChevronRight className="h-4 w-4 text-gray-500" /> : 
+                              <ChevronDown className="h-4 w-4 text-gray-500" />
                             }
-                            <span className="font-medium capitalize text-foreground">{category}</span>
-                            <span className="text-sm text-default-500">({categorizedAssets[category].length} asset{categorizedAssets[category].length > 1 ? 's' : ''})</span>
+                            <span className="font-medium capitalize text-gray-900">{category}</span>
+                            <span className="text-sm text-gray-500">({categorizedAssets[category].length} asset{categorizedAssets[category].length > 1 ? 's' : ''})</span>
                           </div>
-                          <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         </button>
                         
                         {!collapsedCategories[category] && (
-                          <div className="border-t border-default-100 dark:border-default-200/50 p-4 pt-2 space-y-2 bg-default-25 dark:bg-default-50/10">
+                          <div className="border-t border-gray-100 p-4 pt-2 space-y-2">
                             {categorizedAssets[category]
                               .sort((a, b) => a.name.localeCompare(b.name))
                               .map((asset) => (
-                                <div key={asset.id} className="flex items-center space-x-4 p-3 bg-background dark:bg-default-100/20 rounded-xl w-full border border-default-100 dark:border-default-200/30 hover:border-default-300 dark:hover:border-default-200/50 transition-colors">
+                                <div key={asset.id} className="flex items-center space-x-4 p-3 bg-white rounded-lg w-full">
                                 <input
                                   type="checkbox"
                                   checked={selectedAssets.includes(asset.id)}
                                   onChange={() => toggleAssetSelection(asset.id)}
-                                  className="h-4 w-4 text-primary-600 rounded border-default-300 dark:border-default-400 focus:ring-primary-500 focus:ring-2"
+                                  className="h-4 w-4 text-blue-600 rounded border-gray-300"
                                 />
-                                <div className={`w-12 h-12 bg-default-100 dark:bg-default-200/50 rounded-xl overflow-hidden ${
+                                <div className={`w-12 h-12 bg-gray-100 rounded-lg overflow-hidden ${
                                   asset.aspectRatio === '1x1' ? 'aspect-square' :
                                   asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
                                 }`}>
                                   <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-1">
-                                  <h4 className="font-medium text-foreground">{asset.name}</h4>
-                                  <p className="text-sm text-default-500">{asset.size}</p>
+                                  <h4 className="font-medium text-gray-900">{asset.name}</h4>
+                                  <p className="text-sm text-gray-500">{asset.size}</p>
                                 </div>
                               </div>
                             ))}
@@ -868,27 +868,27 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                   {/* Untagged Assets */}
                   {assets.length > 0 && (
                     <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-foreground">Untagged Assets</h4>
+                      <h4 className="text-lg font-semibold text-gray-900">Untagged Assets</h4>
                       <div className="space-y-2">
                         {assets
                           .sort((a, b) => a.name.localeCompare(b.name))
                           .map((asset) => (
-                                                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-default-200 dark:border-default-100 rounded-xl w-full bg-default-50 dark:bg-default-100/20 hover:border-default-300 dark:hover:border-default-200/50 transition-colors">
+                                                    <div key={asset.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg w-full">
                           <input
                             type="checkbox"
                             checked={selectedAssets.includes(asset.id)}
                             onChange={() => toggleAssetSelection(asset.id)}
-                            className="h-4 w-4 text-primary-600 rounded border-default-300 dark:border-default-400 focus:ring-primary-500 focus:ring-2"
+                            className="h-4 w-4 text-blue-600 rounded border-gray-300"
                           />
-                          <div className={`w-16 h-16 bg-default-100 dark:bg-default-200/50 rounded-xl overflow-hidden ${
+                          <div className={`w-16 h-16 bg-gray-100 rounded-lg overflow-hidden ${
                             asset.aspectRatio === '1x1' ? 'aspect-square' :
                             asset.aspectRatio === '3x4' ? 'aspect-[3/4]' : 'aspect-[4/3]'
                           }`}>
                             <img src={asset.thumbnail} alt={asset.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1">
-                              <h4 className="font-medium text-foreground">{asset.name}</h4>
-                            <p className="text-sm text-default-500">{asset.size}</p>
+                              <h4 className="font-medium text-gray-900">{asset.name}</h4>
+                            <p className="text-sm text-gray-500">{asset.size}</p>
                           </div>
                         </div>
                       ))}
@@ -904,9 +904,9 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
           {/* Fixed Bottom Section - Action buttons for each step */}
           {currentStep !== 'progress' && (
-          <div className="flex-shrink-0 p-6 bg-background dark:bg-default-50/50 border-t border-default-200 dark:border-default-100">
+          <div className="flex-shrink-0 p-6 bg-white border-t border-gray-200">
             {currentStep === 'create-project' && (
-              <Button 
+              <button 
                 onClick={() => {
                   const hasUploadedAssets = assets.length > 0 || Object.values(categorizedAssets).some(cat => cat.length > 0);
                   if (hasUploadedAssets) {
@@ -917,29 +917,25 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
                     handleContinueFromProject();
                   }
                 }}
-                isDisabled={!projectName.trim()}
-                color="primary"
-                className="w-full font-medium"
-                size="lg"
+                disabled={!projectName.trim()}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {(() => {
                   const hasUploadedAssets = assets.length > 0 || Object.values(categorizedAssets).some(cat => cat.length > 0);
                   return hasUploadedAssets ? 'Next' : 'Continue';
                 })()}
-              </Button>
+              </button>
             )}
             
             {/* No button for upload step - automatically proceeds after upload completion */}
 
             {currentStep === 'tag-assets' && (
-              <Button 
+              <button 
                 onClick={handleContinueFromTagging}
-                color="primary"
-                className="w-full font-medium"
-                size="lg"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Finish
-              </Button>
+              </button>
             )}
 
 
@@ -948,22 +944,20 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
 
           {/* Floating Tagging Bar - Only show in tag-assets step */}
           {showTaggingBar && currentStep === 'tag-assets' && (
-            <div className="absolute left-0 right-0 bg-background dark:bg-default-100/80 backdrop-blur-md border-t border-default-200 dark:border-default-100 p-4 flex-shrink-0 mx-4 mb-10 rounded-xl bottom-20">
+            <div className="absolute left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 flex-shrink-0 mx-4 mb-10 rounded-xl bottom-20">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-gray-700">
                   Tag {selectedAssets.length} asset{selectedAssets.length > 1 ? 's' : ''} as:
                 </span>
                 <div className="flex space-x-2">
                   {(['icon', 'illustration', 'image', '3d'] as const).map((category) => (
-                    <Button
+                    <button
                       key={category}
                       onClick={() => handleCategoryTag(category)}
-                      color="primary"
-                      size="sm"
-                      className="capitalize font-medium"
+                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors capitalize"
                     >
                       {category}
-                    </Button>
+                    </button>
                   ))}
                 </div>
               </div>

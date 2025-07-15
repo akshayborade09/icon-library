@@ -77,10 +77,12 @@ export default function AssetTabs({
   const { uploadedAssets } = useAsset();
   const [loadedAssets, setLoadedAssets] = useState<{ [key: string]: Asset[] }>({});
   const [loading, setLoading] = useState(false);
+  const [hasMoreContent, setHasMoreContent] = useState(true);
   const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize assets for each type
   const initializeAssets = useCallback(() => {
@@ -97,7 +99,7 @@ export default function AssetTabs({
 
   // Load more assets for infinite scroll
   const loadMoreAssets = useCallback((type: string) => {
-    if (loading) return;
+    if (loading || !hasMoreContent) return;
     
     setLoading(true);
     
@@ -106,6 +108,24 @@ export default function AssetTabs({
       setLoadedAssets(prev => {
         const currentAssets = prev[type] || [];
         const startIndex = currentAssets.length;
+        
+        // Define max limits for each type to prevent infinite loading
+        const maxLimits = {
+          'Icons': 500,
+          'Illustrations': 300,
+          'Spot Icons': 200,
+          'Images': 240,
+          'Animations': 150,
+          '3D Models': 120
+        };
+        
+        // Check if we've reached the limit
+        if (startIndex >= maxLimits[type as keyof typeof maxLimits]) {
+          setLoading(false);
+          setHasMoreContent(false);
+          return prev;
+        }
+        
         const baseValues = {
           'Icons': 500,
           'Illustrations': 300,
@@ -147,7 +167,7 @@ export default function AssetTabs({
       });
       setLoading(false);
     }, 300);
-  }, [loading]);
+  }, [loading, hasMoreContent]);
 
   // Handle scroll for infinite loading and search bar visibility
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
@@ -160,20 +180,46 @@ export default function AssetTabs({
       onScrollVisibilityChange(!isSearchBarVisible);
     }
     
-    if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-      loadMoreAssets(activeTab);
+    // Throttle infinite scroll checks to prevent excessive calls
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
     }
-  }, [activeTab, loadMoreAssets, onScrollVisibilityChange]);
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      // Only trigger infinite scroll if:
+      // 1. Not currently loading
+      // 2. Has more content to load
+      // 3. User is near the bottom (with a larger threshold to prevent constant triggering)
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+      if (!loading && hasMoreContent && distanceFromBottom < 300) {
+        loadMoreAssets(activeTab);
+      }
+    }, 150); // Throttle to 150ms
+  }, [activeTab, loadMoreAssets, onScrollVisibilityChange, loading, hasMoreContent]);
 
   // Initialize assets on mount
   useEffect(() => {
     initializeAssets();
   }, [initializeAssets]);
 
+  // Reset hasMoreContent when tab changes
+  useEffect(() => {
+    setHasMoreContent(true);
+  }, [activeTab]);
+
   // Sync local search query with parent
   useEffect(() => {
     setLocalSearchQuery(searchQuery);
   }, [searchQuery]);
+
+  // Cleanup scroll timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleLocalSearch = (value: string) => {
     setLocalSearchQuery(value);
@@ -259,7 +305,7 @@ export default function AssetTabs({
       className="ml-auto overflow-y-auto scrollbar-thin scrollbar-thumb-default-300 dark:scrollbar-thumb-default-500 scrollbar-track-default-100 dark:scrollbar-track-default-200 bg-background"
       onScroll={handleScroll}
       style={{
-        height: 'calc(100vh - 132px)',
+        height: 'calc(100vh - 0px)',
         padding: '24px'
       }}
     >
@@ -268,23 +314,23 @@ export default function AssetTabs({
         <div className="flex items-center max-w-[1400px] mx-auto gap-4 px-10">
           {/* Search */}
           <div className="flex-1">
-            <form onSubmit={handleLocalSearchSubmit}>
-              <Input
-                type="search"
-                placeholder={`Search ${activeTab.toLowerCase()}...`}
-                value={localSearchQuery}
-                onChange={(e) => handleLocalSearch(e.target.value)}
-                startContent={<Search className="h-4 w-4 text-default-400" strokeWidth={2} />}
-                variant="bordered"
-                radius="lg"
-                classNames={{
-                  base: "w-full",
-                  mainWrapper: "h-full",
-                  input: "text-small",
-                  inputWrapper: "h-12 bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 data-[hover=true]:border-default-400 group-data-[focus=true]:border-primary-500"
-                }}
-              />
-            </form>
+          <form onSubmit={handleLocalSearchSubmit}>
+            <Input
+              type="search"
+              placeholder={`Search ${activeTab.toLowerCase()}...`}
+              value={localSearchQuery}
+              onChange={(e) => handleLocalSearch(e.target.value)}
+              startContent={<Search className="h-6 w-4 text-default-400" strokeWidth={2} />}
+              variant="bordered"
+              radius="md"
+              classNames={{
+                base: "w-full",
+                mainWrapper: "h-full",
+                input: "text-sm",
+                inputWrapper: "h-12 bg-white dark:bg-default-100 border-1 border-gray-200 hover:border-gray-200 focus-within:border-gray-900 shadow-none"
+              }}
+            />
+          </form>
           </div>
 
           {/* Filters and Sort - Only show for Icons */}
@@ -295,15 +341,15 @@ export default function AssetTabs({
                 <Button
                   onClick={() => setSizeDropdownOpen(!sizeDropdownOpen)}
                   variant="bordered"
-                  radius="lg"
+                  radius="md"
                   endContent={<ChevronDown className="h-4 w-4" strokeWidth={2} />}
-                  className="min-w-[100px] bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
+                  className="h-12 min-w-[100px] bg-white dark:bg-default-100 border-1 border-gray-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
                 >
                   Size: {selectedSize === 'all' ? 'All' : selectedSize}
                 </Button>
                 
                 {sizeDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 bg-content1 border border-default-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 bg-content1 border-1 border-gray-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
                     {['all', '16px', '24px', '32px'].map((size) => (
                       <button
                         key={size}
@@ -325,15 +371,15 @@ export default function AssetTabs({
                 <Button
                   onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
                   variant="bordered"
-                  radius="lg"
+                  radius="md"
                   endContent={<ChevronDown className="h-4 w-4" strokeWidth={2} />}
-                  className="min-w-[120px] bg-default-50 dark:bg-default-100 border-default-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
+                  className="h-12 min-w-[120px] bg-white dark:bg-default-100 border-1 border-gray-200 dark:border-default-300 text-default-700 dark:text-default-600 data-[hover=true]:bg-default-100 dark:data-[hover=true]:bg-default-200 data-[hover=true]:border-default-400"
                 >
                   Sort: {sortBy === 'popular' ? 'Popular' : sortBy === 'newest' ? 'Newest' : 'Downloads'}
                 </Button>
                 
                 {sortDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 bg-content1 border border-default-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 bg-content1 border-1 border-gray-200 dark:border-default-300 rounded-large z-10 min-w-[120px] overflow-hidden">
                     {[
                       { value: 'popular', label: 'Popular' },
                       { value: 'newest', label: 'Newest' },
@@ -443,6 +489,13 @@ export default function AssetTabs({
           <div className="flex justify-center items-center py-12 col-span-full">
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-default-200 dark:border-default-300 border-t-primary-500"></div>
             <span className="ml-3 text-default-600 dark:text-default-500 font-medium">Loading more {activeTab.toLowerCase()}...</span>
+          </div>
+        )}
+
+        {/* End of Content Indicator */}
+        {!loading && !hasMoreContent && getCurrentAssets().length > 0 && (
+          <div className="flex justify-center items-center py-8 col-span-full">
+            <span className="text-default-500 text-sm">You've reached the end of {activeTab.toLowerCase()}</span>
           </div>
         )}
       </div>

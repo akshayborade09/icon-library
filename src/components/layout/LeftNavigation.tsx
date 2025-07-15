@@ -114,7 +114,7 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
 
   return (
     <div className={`relative transition-all duration-300 bg-content1 border-r border-divider h-full ${
-      collapsed ? 'w-16' : 'w-64'
+      collapsed ? 'w-20' : 'w-72'
     }`}>
    
 
@@ -122,33 +122,33 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
         {collapsed ? (
           <>
             {/* Collapsed Header - Hamburger Menu Only */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 min-h-20">
               <div className="flex justify-center">
                 <button
                   onClick={onToggle}
-                  className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                  className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  <Menu className="h-5 w-5 transition-transform duration-200 group-hover:rotate-180" strokeWidth={2} />
+                  <Menu className="h-5 w-5 transition-transform duration-200" strokeWidth={2} />
                 </button>
               </div>
             </div>
             
             {/* Collapsed Logo Section */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+            {/* <div className="p-4 border-b border-gray-200 dark:border-gray-800">
               <div className="flex justify-center">
                 <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl">
                   <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
                 </div>
               </div>
-            </div>
+            </div> */}
           </>
         ) : (
           /* Expanded Header - Logo + Text + Hamburger */
-        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800 min-h-20">
           <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl">
+            {/* <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl">
               <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
-            </div>
+            </div> */}
               <div className="flex-1">
                 <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
                   AssetHub
@@ -159,22 +159,22 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
               </div>
               <button
                 onClick={onToggle}
-                className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
               >
-                <Menu className="h-5 w-5 transition-transform duration-200 group-hover:rotate-180" strokeWidth={2} />
+                <Menu className="h-5 w-5 transition-transform duration-200" strokeWidth={2} />
               </button>
             </div>
           </div>
         )}
 
         {/* Navigation */}
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 flex flex-col">
           {!collapsed && (
-            <p className="text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 font-semibold text-xs">
+            <p className="text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 font-medium mt-2 text-xs">
               Platform
             </p>
           )}
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const active = isParentActive(item);
@@ -184,9 +184,9 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
                 <div key={item.href}>
                   {/* Main navigation item */}
                   <div
-                    className={`flex items-center px-3 py-2 rounded-xl transition-all duration-200 cursor-pointer ${
+                    className={`flex items-center pl-3 pr-3 py-2.5 rounded-full transition-all duration-200 cursor-pointer ${
                       active
-                        ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800 shadow-sm'
+                        ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-primary-400'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     } ${collapsed ? 'justify-center' : 'space-x-3'}`}
                     onClick={() => {
@@ -196,9 +196,11 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
                         return;
                       }
                       
-                      if (item.hasSubItems) {
+                      if (item.hasSubItems && !collapsed) {
+                        // Only allow expanding sub-items when sidebar is not collapsed
                         toggleExpanded(item.label);
                       } else {
+                        // When collapsed or no sub-items, just navigate
                         router.push(item.href);
                       }
                     }}
@@ -223,7 +225,7 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
 
                   {/* Sub Items */}
                   {expandedItems.includes(item.label) && item.subItems && (
-                    <div className="ml-2 space-y-1 mt-1">
+                    <div className="ml-2 mt-1">
                       {item.subItems.map((subItem) => {
                         // Extract tab name from href (e.g., 'icons' from '/?tab=icons')
                         const subTabName = subItem.href.split('tab=')[1];
@@ -238,9 +240,9 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
                           <Link
                             key={subItem.label}
                             href={subItem.href}
-                            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-xl transition-all duration-200 ${
+                            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-3xl mb-0.5 transition-all duration-200 ${
                               isSubItemActive
-                                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border-l-2 border-primary-500 dark:border-primary-600 shadow-sm'
+                                ? 'bg-gray-100 dark:bg-primary-900/30 text-gray-900 dark:text-gray-200'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
                             }`}
                           >
@@ -257,20 +259,20 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
           </nav>
 
           {/* Theme Toggle */}
-          {!collapsed && (
+          {/* {!collapsed && (
             <div className="mt-6">
               <ThemeToggle collapsed={collapsed} />
             </div>
           )}
-          
+           */}
           {/* Account Section */}
           {!collapsed && (
             <>
-              <p className="text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 font-semibold mt-8 text-xs">
+              <p className="text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 font-medium mt-8 text-xs">
                 Account
               </p>
               <Link href="/settings">
-                <div className="flex items-center space-x-3 px-3 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+                <div className="flex items-center space-x-3 px-3 py-2 rounded-3xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
                   <Settings className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
                   <span className="font-medium text-sm">
                     Settings
@@ -282,11 +284,11 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
           
           {collapsed && (
             <div className="mt-8 space-y-3">
-              <div className="flex justify-center">
+              {/* <div className="flex justify-center">
                 <ThemeToggle collapsed={collapsed} />
-              </div>
+              </div> */}
               <Link href="/settings">
-                <div className="flex items-center justify-center px-3 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+                <div className="flex items-center justify-center px-2 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
                   <Settings className="w-5 h-5" strokeWidth={2} />
                 </div>
               </Link>

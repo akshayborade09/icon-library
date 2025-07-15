@@ -40,7 +40,7 @@ export default function ThemeToggle({ collapsed = false }: ThemeToggleProps) {
       >
         {!collapsed && (
           <div className="flex flex-col gap-1">
-            <p className="text-medium">{theme === 'dark' ? 'Dark' : 'Light'} Mode</p>
+            <p className="text-medium">{theme === 'dark' ? 'Dark' : 'Light'}</p>
             <p className="text-tiny text-default-400">
               {theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             </p>
