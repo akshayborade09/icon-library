@@ -509,7 +509,7 @@ const AssetUpload: React.FC<AssetUploadProps> = ({ isOpen, onClose, mode = 'uplo
       {/* Right Side Overlay - 1/3 screen width with proper positioning context */}
       <div className="w-1/3 h-full bg-white dark:bg-gray-950 shadow-xl flex flex-col relative overflow-hidden border-l border-gray-200 dark:border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
           <div className="flex items-center space-x-3">
             {/* Back buttons for each step */}
             {isUploadMoreMode && (

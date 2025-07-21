@@ -84,7 +84,6 @@ export default function Home() {
   const router = useRouter();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showHeaderSearch, setShowHeaderSearch] = useState(false);
   const [selectedSize, setSelectedSize] = useState('all');
   const [sortBy, setSortBy] = useState('popular');
@@ -109,8 +108,9 @@ export default function Home() {
 
   const [activeTab, setActiveTab] = useState('Icons');
 
+  // Only allow toggling via the toggleSidebar function
   const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
+    // setSidebarCollapsed((prev) => !prev); // This line is removed
   };
 
   const handleSearch = (query: string) => {
@@ -183,7 +183,7 @@ export default function Home() {
     >
       <div className="flex h-screen bg-background overflow-hidden">
         {/* Sidebar - Full height */}
-        <LeftNavigation collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+        <LeftNavigation />
         
         {/* Main content area - No top header */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -222,18 +222,16 @@ export default function Home() {
             }
           />
 
-          {/* Header Search Bar - Only show when scrolled */}
-          {showHeaderSearch && (
-            <TabSearch 
-              activeTab={activeTab}
-              onSearch={handleSearch}
-              searchQuery={searchQueries[activeTab]}
-              selectedSize={selectedSize}
-              onSizeChange={setSelectedSize}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-            />
-          )}
+          {/* Header Search Bar - Always visible */}
+          <TabSearch 
+            activeTab={activeTab}
+            onSearch={handleSearch}
+            searchQuery={searchQueries[activeTab]}
+            selectedSize={selectedSize}
+            onSizeChange={setSelectedSize}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
           
           {/* Page content */}
           <main className="flex-1 overflow-hidden">
@@ -245,7 +243,7 @@ export default function Home() {
               onSearch={handleSearch}
               onSizeChange={setSelectedSize}
               onSortChange={setSortBy}
-              onScrollVisibilityChange={setShowHeaderSearch}
+              // Removed onScrollVisibilityChange
             />
             <SuccessToast />
           </main>

@@ -23,10 +23,11 @@ import {
 } from 'lucide-react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
-interface LeftNavigationProps {
-  collapsed: boolean;
-  onToggle: () => void;
-}
+// Remove LeftNavigationProps and props
+// interface LeftNavigationProps {
+//   collapsed: boolean;
+//   onToggle: () => void;
+// }
 
 const navigationItems = [
   {
@@ -59,18 +60,17 @@ const navigationItems = [
   },
 ];
 
-export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationProps) {
+export default function LeftNavigation() {
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>(['Dashboard']); // Dashboard expanded by default
 
   // Auto-collapse/expand Dashboard subtabs based on sidebar state
   useEffect(() => {
     if (collapsed) {
-      // When sidebar collapses, remove Dashboard from expanded items
       setExpandedItems(prev => prev.filter(item => item !== 'Dashboard'));
     } else {
-      // When sidebar expands, add Dashboard back to expanded items
-      setExpandedItems(prev => 
+      setExpandedItems(prev =>
         prev.includes('Dashboard') ? prev : [...prev, 'Dashboard']
       );
     }
@@ -125,8 +125,8 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
             <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 min-h-20">
               <div className="flex justify-center">
                 <button
-                  onClick={onToggle}
-                  className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+                  onClick={() => setCollapsed((prev) => !prev)}
+                  className="group p-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
                 >
                   <Menu className="h-5 w-5 transition-transform duration-200" strokeWidth={2} />
                 </button>
@@ -158,8 +158,8 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
                 </p>
               </div>
               <button
-                onClick={onToggle}
-                className="group p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+                onClick={() => setCollapsed((prev) => !prev)}
+                className="group p-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
               >
                 <Menu className="h-5 w-5 transition-transform duration-200" strokeWidth={2} />
               </button>
@@ -169,11 +169,11 @@ export default function LeftNavigation({ collapsed, onToggle }: LeftNavigationPr
 
         {/* Navigation */}
         <div className="flex-1 p-4 flex flex-col">
-          {!collapsed && (
+          {/* {!collapsed && (
             <p className="text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 font-medium mt-2 text-xs">
               Platform
             </p>
-          )}
+          )} */}
           <nav className="space-y-1">
             {navigationItems.map((item) => {
               const Icon = item.icon;
